@@ -6,13 +6,19 @@ from OlivOS.middlewares import Proc
 from OlivOS.middlewares.onebot import OlivOSEvent
 from OlivOS.plugin import get_loaded_plugins, load_plugins
 
+driver = get_driver()
+message_matcher = on_message()
+notice_matcher = on_notice()
+request_matcher = on_request()
+meta_matcher = on_metaevent()
 
-@get_driver().on_startup
+
+@driver.on_startup
 async def startup():
     load_plugins()
 
 
-@get_driver().on_bot_connect
+@driver.on_bot_connect
 async def _(bot: Bot):
     for p in get_loaded_plugins():
         p.route.init(None, Proc())
@@ -20,35 +26,35 @@ async def _(bot: Bot):
         p.route.after_init(None, Proc())
 
 
-@on_message().handle()
+@message_matcher.handle()
 async def _(bot: Bot, event: Event):
     for p in get_loaded_plugins():
         ovo_event = OlivOSEvent(bot, event)
         getattr(p.route, ovo_event.plugin_info["func_type"])(ovo_event, Proc())
 
 
-@on_notice().handle()
+@notice_matcher.handle()
 async def _(bot: Bot, event: Event):
     for p in get_loaded_plugins():
         ovo_event = OlivOSEvent(bot, event)
         getattr(p.route, ovo_event.plugin_info["func_type"])(ovo_event, Proc())
 
 
-@on_request().handle()
+@request_matcher.handle()
 async def _(bot: Bot, event: Event):
     for p in get_loaded_plugins():
         ovo_event = OlivOSEvent(bot, event)
         getattr(p.route, ovo_event.plugin_info["func_type"])(ovo_event, Proc())
 
 
-@on_metaevent().handle()
+@meta_matcher.handle()
 async def _(bot: Bot, event: Event):
     for p in get_loaded_plugins():
         ovo_event = OlivOSEvent(bot, event)
         getattr(p.route, ovo_event.plugin_info["func_type"])(ovo_event, Proc())
 
 
-@get_driver().on_bot_disconnect
+@driver.on_bot_disconnect
 async def _(bot: Bot):
     for p in get_loaded_plugins():
         p.route.save(None, Proc())

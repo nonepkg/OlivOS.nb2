@@ -7,7 +7,7 @@ license = "AGPL-3.0-only"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.7.3"
 nonebot2 = "^2.0.0a13"
 nonebot-adapter-cqhttp = "^2.0.0a13"
 

@@ -3,12 +3,12 @@
 [NoneBot2](https://github.com/nonebot/nonebot2) 的 [OlivOS](https://github.com/OlivOS-Team/OlivOS) 兼容层插件
 
 [![License](https://img.shields.io/github/license/j1g5awi/OlivOS.nb2)](LICENSE)
-![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)
+![Python Version](https://img.shields.io/badge/python-3.7.3+-blue.svg)
 ![NoneBot Version](https://img.shields.io/badge/nonebot-2.0.0a13+-red.svg)
-<!-- ![Pypi Version](https://img.shields.io/pypi/v/OlivOS.nb2.svg) -->
+![Pypi Version](https://img.shields.io/pypi/v/OlivOS.nb2.svg)
 
 ### 安装
-<!--
+
 #### 从 PyPI 安装（推荐）
 
 - 使用 nb-cli  
@@ -28,7 +28,7 @@ poetry add OlivOS.nb2
 ```
 pip install OlivOS.nb2
 ```
--->
+
 #### 从 GitHub 安装（不推荐）
 
 ```

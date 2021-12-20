@@ -82,6 +82,8 @@ class OlivOSEvent(BaseOlivOSEvent):
         if isinstance(event, MessageEvent):
             self.data.message = event.raw_message
             self.data.sender = event.sender.dict()
+            self.data.sender["name"] = self.data.sender.pop("nickname")
+            self.data.sender["id"] = self.data.sender.pop("user_id")
             self.data.extend = {}
             # self.data.message_sdk = OlivOS.messageAPI.Message_templet(
             #     "old_string", str(event.message)

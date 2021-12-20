@@ -23,7 +23,7 @@ async def _(bot: Bot):
     for p in get_loaded_plugins():
         p.route.init(None, Proc())
     for p in get_loaded_plugins():
-        p.route.after_init(None, Proc())
+        p.route.init_after(None, Proc())
 
 
 @message_matcher.handle()

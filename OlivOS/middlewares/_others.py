@@ -1,7 +1,9 @@
 import hashlib
+from typing import Optional, Union
 
 from nonebot import get_bots
 from nonebot.adapters import Bot
+from nonebot.adapters.cqhttp.message import Message
 from nonebot.log import logger
 
 
@@ -32,3 +34,14 @@ class Proc:
                 )
                 self.Proc_data["bot_info_dict"].update({bot_info.hash: bot_info})
         self.log = lambda log_level, log_message, log_segment: logger.info(log_message)
+
+
+ID = Union[int, str]
+
+MSG = str
+
+
+class Result:
+    def __init__(self, active: bool = False, data: Optional[dict] = None):
+        self.active = active
+        self.data = data

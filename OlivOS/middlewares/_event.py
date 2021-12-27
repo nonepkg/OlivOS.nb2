@@ -1,9 +1,11 @@
+import asyncio
 from abc import ABC, abstractmethod
-from typing import Callable, Optional
+from typing import Awaitable, Callable, Optional
 
+from nonebot import get_bot
 from nonebot.adapters import Bot, Event
 
-from ._others import BotInfo
+from ._others import ID, MSG, BotInfo, Result
 
 
 class OlivOSEvent(ABC):
@@ -65,3 +67,110 @@ class OlivOSEvent(ABC):
                     self.plugin_info["message_mode_tx"]
                 )
     """
+
+    def run_async(self, func: Awaitable):
+        task = asyncio.create_task(func)
+        if task.done():
+            return task.result()
+        else:
+            return None
+
+    def set_block(self):
+        pass
+
+    def call_api(self, api: str, **kwargs):
+        result = self.run_async(get_bot(str(self.bot_info.id)).call_api(api, **kwargs))
+        if result:
+            return Result(True, result)
+        else:
+            return Result()
+
+    @abstractmethod
+    def reply(self, message: MSG):
+        raise NotImplementedError
+
+    @abstractmethod
+    def send(self, send_type: str, target_id: ID, message: MSG):
+        raise NotImplementedError
+
+    @abstractmethod
+    def delete_msg(self, message_id: ID):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_msg(self, message_id: ID):
+        raise NotImplementedError
+
+    @abstractmethod
+    def send_like(self, user_id: ID):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_group_kick(self, group_id: ID, user_id: ID):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_group_ban(self, group_id: ID, user_id: ID):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_group_whole_ban(self, group_id: ID, enable: bool):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_group_admin(self, group_id: ID, user_id: ID, enable: bool):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_group_card(self, group_id: ID, user_id: ID, card: str):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_group_name(self, group_id: ID, group_name: str):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_group_leave(self, group_id: ID):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_group_special_title(
+        self, group_id: ID, user_id: ID, special_title: str, duration: int
+    ):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_friend_add_request(self, flag: ID, approve: bool, remark: str):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_group_add_request(self, flag: ID, sub_type: str, approve: bool, reason):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_login_info(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_stranger_info(self, user_id: ID):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_friend_list(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_group_info(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_group_list(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_group_member_info(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_group_member_list(self):
+        raise NotImplementedError

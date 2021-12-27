@@ -25,9 +25,10 @@ async def _(bot: Bot):
 
 @matcher.handle()
 async def _(bot: Bot, event: Event):
-    for p in get_loaded_plugins():
-        ovo_event = OlivOSEvent(bot, event)
-        getattr(p.route, ovo_event.plugin_info["func_type"])(ovo_event, Proc())
+    ovo_event = OlivOSEvent(bot, event)
+    if ovo_event.plugin_info["func_type"]:
+        for p in get_loaded_plugins():
+            getattr(p.route, ovo_event.plugin_info["func_type"])(ovo_event, Proc())
 
 
 @driver.on_bot_disconnect

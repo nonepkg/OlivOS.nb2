@@ -150,7 +150,9 @@ class OlivOSEvent(BaseOlivOSEvent):
 
     def reply(self, message: MSG):
         if self.data:
-            self.run_async(get_bot(str(self.bot_info.id)).send(self.data, message))
+            self.run_async(
+                get_bot(str(self.bot_info.id)).send(self.data, Message(message))
+            )
 
     def send(self, send_type: str, target_id: ID, message: MSG):
         self.call_api(

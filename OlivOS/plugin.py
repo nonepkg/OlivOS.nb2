@@ -25,9 +25,9 @@ class Route:
                 setattr(self, k, v)
 
     def __getattr__(self, name: str):
-        return self.handle
+        return self.default_handle
 
-    def handle(
+    def default_handle(
         self,
         plugin_event: Optional[OlivOSEvent] = None,
         proc: Optional[Proc] = None,

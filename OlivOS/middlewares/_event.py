@@ -4,11 +4,19 @@ from typing import Awaitable, Callable, Optional
 
 from nonebot import get_bot
 from nonebot.adapters import Bot, Event
+from pydantic import BaseConfig, BaseModel
 
 from ._others import ID, MSG, BotInfo, Result
 
 
 class OlivOSEvent(ABC):
+    bot_info: BotInfo
+    data: "Data"
+
+    class Data(BaseModel):
+        class Config(BaseConfig):
+            extra = "allow"
+
     def __init__(
         self,
         bot: Optional[Bot] = None,
@@ -19,14 +27,17 @@ class OlivOSEvent(ABC):
         self.platform["sdk"] = None
         self.platform["platform"] = None
         self.platform["model"] = None
-        self.data = None
+
         self.active = False
         self.blocked = False
+
         self.log_func = log_func
+
         self.base_info = {}
         self.base_info["time"] = None
         self.base_info["self_id"] = None
         self.base_info["type"] = None
+
         self.plugin_info = {}
         self.plugin_info["func_type"] = None
         self.plugin_info[
@@ -38,35 +49,45 @@ class OlivOSEvent(ABC):
         self.plugin_info["name"] = "unity"
         self.plugin_info["namespace"] = "unity"
         self.plugin_info["tx_queue"] = []
+
         if bot:
-            if isinstance(bot, Bot):
-                self.platform = {"sdk": "onebot", "platform": "qq", "model": "nonebot"}
-            self.bot_info = BotInfo(int(bot.self_id), self.platform)
+            self.process_bot(bot)
+
         if event:
-            self.get_Event_from_SDK(event)
-        # TODO self.get_Event_on_Plugin()
+            self.process_event(event)
+
+        self.process_message()
 
     @abstractmethod
-    def get_Event_from_SDK(self, event: Event):
+    def process_bot(self, bot: Bot):
         raise NotImplementedError
 
-    """
-    TODO
-    def get_Event_on_Plugin(self):
+    @abstractmethod
+    def process_event(self, event: Event):
+        raise NotImplementedError
+
+    def process_message(self):
         if self.plugin_info["func_type"] in ["private_message", "group_message"]:
-            if self.data.message_sdk.mode_rx == self.plugin_info["message_mode_tx"]:
-                self.data.message = self.data.message_sdk.data_raw
+            if (
+                self.data.message_sdk.mode_rx  # type:ignore
+                == self.plugin_info["message_mode_tx"]
+            ):
+                self.data.message = self.data.message_sdk.data_raw  # type:ignore
             else:
-                self.data.message = self.data.message_sdk.get(
+                self.data.message = self.data.message_sdk.get(  # type:ignore
                     self.plugin_info["message_mode_tx"]
                 )
-            if self.data.raw_message_sdk.mode_rx == self.plugin_info["message_mode_tx"]:
-                self.data.raw_message = self.data.raw_message_sdk.data_raw
+            if (
+                self.data.raw_message_sdk.mode_rx  # type:ignore
+                == self.plugin_info["message_mode_tx"]
+            ):
+                self.data.raw_message = (
+                    self.data.raw_message_sdk.data_raw  # type:ignore
+                )
             else:
-                self.data.raw_message = self.data.raw_message_sdk.get(
+                self.data.raw_message = self.data.raw_message_sdk.get(  # type:ignore
                     self.plugin_info["message_mode_tx"]
                 )
-    """
 
     def run_async(self, func: Awaitable):
         task = asyncio.create_task(func)
@@ -78,7 +99,7 @@ class OlivOSEvent(ABC):
     def set_block(self):
         pass
 
-    def call_api(self, api: str, **kwargs):
+    def call_api(self, api: str, **kwargs) -> Result:
         result = self.run_async(get_bot(str(self.bot_info.id)).call_api(api, **kwargs))
         if result:
             return Result(True, result)
@@ -98,7 +119,7 @@ class OlivOSEvent(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_msg(self, message_id: ID):
+    def get_msg(self, message_id: ID) -> Result:
         raise NotImplementedError
 
     @abstractmethod
@@ -148,29 +169,29 @@ class OlivOSEvent(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_login_info(self):
+    def get_login_info(self) -> Result:
         raise NotImplementedError
 
     @abstractmethod
-    def get_stranger_info(self, user_id: ID):
+    def get_stranger_info(self, user_id: ID) -> Result:
         raise NotImplementedError
 
     @abstractmethod
-    def get_friend_list(self):
+    def get_friend_list(self) -> Result:
         raise NotImplementedError
 
     @abstractmethod
-    def get_group_info(self):
+    def get_group_info(self) -> Result:
         raise NotImplementedError
 
     @abstractmethod
-    def get_group_list(self):
+    def get_group_list(self) -> Result:
         raise NotImplementedError
 
     @abstractmethod
-    def get_group_member_info(self):
+    def get_group_member_info(self) -> Result:
         raise NotImplementedError
 
     @abstractmethod
-    def get_group_member_list(self):
+    def get_group_member_list(self) -> Result:
         raise NotImplementedError

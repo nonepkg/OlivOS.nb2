@@ -3,12 +3,11 @@ from typing import Optional, Union
 
 from nonebot import get_bots
 from nonebot.adapters import Bot
-from nonebot.adapters.cqhttp.message import Message
 from nonebot.log import logger
 
 
 class BotInfo:
-    def __init__(self, id: int, platform: dict) -> None:
+    def __init__(self, id: "ID", platform: dict) -> None:
         self.id = id
         self.platform = platform
         self.hash = self.get_hash()
@@ -18,7 +17,7 @@ class BotInfo:
         hash_tmp.update(str(self.id).encode(encoding="UTF-8"))
         hash_tmp.update(str(self.platform["sdk"]).encode(encoding="UTF-8"))
         hash_tmp.update(str(self.platform["platform"]).encode(encoding="UTF-8"))
-        # hash_tmp.update(str(platform_model).encode(encoding='UTF-8'))
+        # hash_tmp.update(str(self.platform["model"]).encode(encoding='UTF-8'))
         return hash_tmp.hexdigest()
 
 

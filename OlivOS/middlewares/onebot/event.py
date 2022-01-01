@@ -1,62 +1,37 @@
-from typing import Callable, Dict, Optional, Type
+"""
+https://github.com/OlivOS-Team/OlivOS/blob/main/OlivOS/onebotSDK.py
+"""
+
+from typing import Dict, Optional, Type, cast
 
 from nonebot import get_bot
 from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import *
+from nonebot.adapters.cqhttp.event import *  # type:ignore
 from nonebot.adapters.cqhttp.message import Message
 
+from OlivOS.messageAPI import Message_templet
 from OlivOS.middlewares import ID, MSG, BotInfo
 from OlivOS.middlewares import OlivOSEvent as BaseOlivOSEvent
 from OlivOS.middlewares import Result
 
 
 class OlivOSEvent(BaseOlivOSEvent):
-    def __init__(
-        self,
-        bot: Optional[Bot] = None,
-        event: Optional[Event] = None,
-        log_func: Optional[Callable] = None,
-    ):
+    def process_bot(self, bot: Bot):
         self.platform = {}
-        self.platform["sdk"] = None
-        self.platform["platform"] = None
-        self.platform["model"] = None
-        self.data = None
-        self.active = False
-        self.blocked = False
-        self.log_func = log_func
-        self.base_info = {}
-        self.base_info["time"] = None
-        self.base_info["self_id"] = None
-        self.base_info["type"] = None
-        self.plugin_info = {}
-        self.plugin_info["func_type"] = None
-        self.plugin_info[
-            "message_mode_rx"
-        ] = "old_string"  # OlivOS_message_mode_rx_default
-        self.plugin_info[
-            "message_mode_tx"
-        ] = "olivos_string"  # OlivOS_message_mode_rx_default
-        self.plugin_info["name"] = "unity"
-        self.plugin_info["namespace"] = "unity"
-        self.plugin_info["tx_queue"] = []
-        if bot:
-            if isinstance(bot, Bot):
-                self.platform = {"sdk": "onebot", "platform": "qq", "model": "nonebot"}
-            self.bot_info = BotInfo(int(bot.self_id), self.platform)
-        if event:
-            self.get_Event_from_SDK(event)
-        # self.get_Event_on_Plugin()
+        self.platform["sdk"] = "onebot"
+        self.platform["platform"] = "qq"
+        self.platform["model"] = "nonebot"
+        self.bot_info = BotInfo(bot.self_id, self.platform)
 
-    def get_Event_from_SDK(self, event: Event):
-        self.data = event.copy()
+    def process_event(self, event: Event):
+        self.data = self.Data(**event.dict())
+
         self.base_info["time"] = event.time
         self.base_info["self_id"] = event.self_id
         self.base_info["type"] = event.post_type
-        self.base_info["sdk"] = "onebot"
-        self.base_info["platform"] = "qq"
-        self.base_info["model"] = "nonebot"
+
         self.plugin_info["message_mode_rx"] = "old_string"
+
         func_type_map: Dict[Type[Event], Optional[str]] = {
             PrivateMessageEvent: "private_message",
             GroupMessageEvent: "group_message",
@@ -77,40 +52,19 @@ class OlivOSEvent(BaseOlivOSEvent):
             HeartbeatMetaEvent: "heartbeat",
         }
         if type(event) in func_type_map:
-            self.data.active = True
+            self.active = True
             self.plugin_info["func_type"] = func_type_map[type(event)]
         if isinstance(event, MessageEvent):
             self.data.message = event.raw_message
-            self.data.sender = event.sender.dict()
-            self.data.sender["name"] = event.sender.nickname
-            self.data.sender["id"] = event.sender.user_id
+            self.data.sender["name"] = event.sender.nickname  # type: ignore
+            self.data.sender["id"] = event.sender.user_id  # type: ignore
             self.data.extend = {}
-            # self.data.message_sdk = OlivOS.messageAPI.Message_templet(
-            #     "old_string", str(event.message)
-            # )
-            # self.data.raw_message_sdk = OlivOS.messageAPI.Message_templet(
-            #     "old_string", event.raw_message
-            # )
+            self.data.message_sdk = Message_templet("old_string", event.raw_message)
+            self.data.raw_message_sdk = Message_templet("old_string", event.raw_message)
             if isinstance(event, GroupMessageEvent):
                 self.data.host_id = None
                 if event.sub_type != "normal":
                     self.active = False
-            # TODO GuildEvent
-            # elif event.message_type == "guild":
-            #     if event.sub_type == "channel":
-            #         self.active = True
-            #         self.plugin_info["func_type"] = "group_message"
-            #         if "guild_id" in self.sdk_event.json:
-            #             self.data.host_id = event.guild_id
-            #             self.data.extend["host_group_id"] = self.sdk_event.json[
-            #                 "guild_id"
-            #             ]
-            #         if "self_tiny_id" in self.sdk_event.json:
-            #             self.data.extend["sub_self_id"] = self.sdk_event.json[
-            #                 "self_tiny_id"
-            #             ]
-            #             if event.user_id == event.self_tiny_id:
-            #                 self.active = False
             if event.raw_message == "":
                 self.active = False
         elif isinstance(event, NoticeEvent):
@@ -151,7 +105,9 @@ class OlivOSEvent(BaseOlivOSEvent):
     def reply(self, message: MSG):
         if self.data:
             self.run_async(
-                get_bot(str(self.bot_info.id)).send(self.data, Message(message))
+                get_bot(str(self.bot_info.id)).send(
+                    cast(Event, self.data), Message(message)
+                )
             )
 
     def send(self, send_type: str, target_id: ID, message: MSG):
@@ -230,23 +186,23 @@ class OlivOSEvent(BaseOlivOSEvent):
             reason=reason,
         )
 
-    def get_login_info(self):
+    def get_login_info(self) -> Result:
         return self.call_api("get_login_info")
 
-    def get_stranger_info(self, user_id: ID):
+    def get_stranger_info(self, user_id: ID) -> Result:
         return self.call_api("get_stranger_info", user_id=int(user_id))
 
-    def get_friend_list(self):
+    def get_friend_list(self) -> Result:
         return self.call_api("get_friend_list")
 
-    def get_group_info(self):
+    def get_group_info(self) -> Result:
         return self.call_api("get_group_info")
 
-    def get_group_list(self):
+    def get_group_list(self) -> Result:
         return self.call_api("get_group_list")
 
-    def get_group_member_info(self):
+    def get_group_member_info(self) -> Result:
         return self.call_api("get_group_member_info")
 
-    def get_group_member_list(self):
+    def get_group_member_list(self) -> Result:
         return self.call_api("get_group_member_list")

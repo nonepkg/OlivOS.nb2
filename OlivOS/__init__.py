@@ -15,7 +15,7 @@ _proc = Proc()
 
 @driver.on_startup
 async def startup():
-    import_middleware()
+    import_middleware(*driver._adapters.keys())
     load_plugins()
 
 

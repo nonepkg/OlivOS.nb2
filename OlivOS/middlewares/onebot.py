@@ -21,7 +21,7 @@ class OlivOSEvent(BaseOlivOSEvent):
         self.platform["sdk"] = "onebot"
         self.platform["platform"] = "qq"
         self.platform["model"] = "nonebot"
-        self.bot_info = BotInfo(bot.self_id, self.platform)
+        self.bot_info = BotInfo(bot)
 
     def process_event(self, event: Event):
         self.data = self.Data(**event.dict())

@@ -37,6 +37,7 @@ pip install OlivOS.nb2
 
 ```
 poetry add git+https://github.com/nonepkg/OlivOS.nb2.git
+```
 
 - 使用 pip
 

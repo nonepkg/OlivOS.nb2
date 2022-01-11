@@ -12,6 +12,7 @@ from pydantic import BaseConfig, BaseModel
 middlewares_map = {"cqhttp": "onebot"}
 sdk_map = {"cqhttp": "onebot"}
 platform_map = {"cqhttp": "qq"}
+
 _middlewares: Dict[str, Type["OlivOSEvent"]] = {}
 
 

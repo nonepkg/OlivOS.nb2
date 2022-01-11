@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "OlivOS.nb2"
-version = "0.1.4"
+version = "0.1.6"
 description = "Load OlivOS plugin in NoneBot2"
 authors = ["jigsaw <j1g5aw@foxmail.com>"]
 license = "AGPL-3.0-only"
@@ -9,8 +9,8 @@ packages = [{ include = "OlivOS" }]
 
 [tool.poetry.dependencies]
 python = "^3.7.3"
-nonebot2 = ">=2.0.0a13, <2.0.0b1"
-nonebot-adapter-cqhttp = "^2.0.0a13"
+nonebot2 = "^2.0.0b1"
+nonebot-adapter-onebot = "^2.0.0b1"
 
 [tool.poetry.dev-dependencies]
 nb-cli = "^0.5.1"

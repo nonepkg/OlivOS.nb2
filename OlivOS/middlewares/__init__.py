@@ -7,18 +7,18 @@ from typing import Awaitable, Callable, Dict, Optional, Type, Union
 from nonebot import get_bot, get_bots
 from nonebot.adapters import Bot, Event
 from nonebot.log import logger
-from pydantic import BaseConfig, BaseModel
+from pydantic import BaseModel
 
-middlewares_map = {"cqhttp": "onebot"}
-sdk_map = {"cqhttp": "onebot"}
-platform_map = {"cqhttp": "qq"}
+middlewares_map = {"onebot": "onebot"}
+sdk_map = {"onebot": "onebot"}
+platform_map = {"onebot": "qq"}
 
 _middlewares: Dict[str, Type["OlivOSEvent"]] = {}
 
 
 def import_middleware(*adapters):
     for adapter in adapters:
-        adapter = adapter.lower()
+        adapter = adapter.split(maxsplit=1)[0].lower()
         if adapter in middlewares_map:
             module = importlib.import_module(
                 "OlivOS.middlewares." + middlewares_map[adapter]
@@ -46,7 +46,7 @@ class BotInfo:
     def __init__(self, bot: Bot) -> None:
         self.id = bot.self_id
         self.platform = {"model": "nonebot"}
-        type = bot.type.lower()
+        type = bot.type.split(maxsplit=1)[0].lower()
         self.platform["sdk"] = sdk_map.get(type, type)
         self.platform["platform"] = platform_map.get(type, type)
 
@@ -73,7 +73,7 @@ class OlivOSEvent(ABC):
     data: "Data"
 
     class Data(BaseModel):
-        class Config(BaseConfig):
+        class Config:
             extra = "allow"
 
     def __init__(

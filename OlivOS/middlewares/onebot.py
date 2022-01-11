@@ -5,9 +5,9 @@ https://github.com/OlivOS-Team/OlivOS/blob/main/OlivOS/onebotSDK.py
 from typing import Dict, Optional, Type, cast
 
 from nonebot import get_bot
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import *  # type:ignore
-from nonebot.adapters.cqhttp.message import Message
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import *  # type:ignore
+from nonebot.adapters.onebot.v11.message import Message
 
 from OlivOS.messageAPI import Message_templet
 from OlivOS.middlewares import ID, MSG, BotInfo

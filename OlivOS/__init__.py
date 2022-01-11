@@ -31,8 +31,8 @@ async def _(bot: Bot):
 
 @matcher.handle()
 async def _(bot: Bot, event: Event):
-    if bot.type.lower() in _middlewares:
-        ovo_event = _middlewares[bot.type.lower()](bot, event)
+    if bot.type.split(maxsplit=1)[0].lower() in _middlewares:
+        ovo_event = _middlewares[bot.type.split(maxsplit=1)[0].lower()](bot, event)
         if ovo_event.plugin_info["func_type"]:
             for p in get_loaded_plugins():
                 if type(ovo_event) in p.support:

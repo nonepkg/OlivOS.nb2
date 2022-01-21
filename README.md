@@ -1,3 +1,6 @@
+<div align="center">
+	<img width="200" src="docs/logo.png" alt="logo"></br>
+
 # OlivOS.nb2
 
 [NoneBot2](https://github.com/nonebot/nonebot2) 的 [OlivOS](https://github.com/OlivOS-Team/OlivOS) 兼容层插件
@@ -8,6 +11,8 @@
 ![Python Version](https://img.shields.io/badge/python-3.7.3+-blue.svg)
 ![NoneBot Version](https://img.shields.io/badge/nonebot-2.0.0a13+-red.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/OlivOS.nb2.svg)
+
+</div>
 
 ### 安装
 

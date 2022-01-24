@@ -9,9 +9,9 @@ from nonebot.adapters import Bot, Event
 from nonebot.log import logger
 from pydantic import BaseModel
 
-middlewares_map = {"onebot": "onebot"}
-sdk_map = {"onebot": "onebot"}
-platform_map = {"onebot": "qq"}
+middlewares_map = {"onebot": "onebot", "telegram": "telegram"}
+sdk_map = {"onebot": "onebot", "telegram": "telegram"}
+platform_map = {"onebot": "qq", "telegram": "telegram"}
 
 _middlewares: Dict[str, Type["OlivOSEvent"]] = {}
 
@@ -73,6 +73,9 @@ class OlivOSEvent(ABC):
     data: "Data"
 
     class Data(BaseModel):
+        def __getattr__(self, name):
+            return None
+
         class Config:
             extra = "allow"
 
@@ -169,88 +172,67 @@ class OlivOSEvent(ABC):
     def reply(self, message: MSG):
         raise NotImplementedError
 
-    @abstractmethod
     def send(self, send_type: str, target_id: ID, message: MSG):
         raise NotImplementedError
 
-    @abstractmethod
     def delete_msg(self, message_id: ID):
         raise NotImplementedError
 
-    @abstractmethod
     def get_msg(self, message_id: ID) -> Result:
         raise NotImplementedError
 
-    @abstractmethod
     def send_like(self, user_id: ID):
         raise NotImplementedError
 
-    @abstractmethod
     def set_group_kick(self, group_id: ID, user_id: ID):
         raise NotImplementedError
 
-    @abstractmethod
     def set_group_ban(self, group_id: ID, user_id: ID):
         raise NotImplementedError
 
-    @abstractmethod
     def set_group_whole_ban(self, group_id: ID, enable: bool):
         raise NotImplementedError
 
-    @abstractmethod
     def set_group_admin(self, group_id: ID, user_id: ID, enable: bool):
         raise NotImplementedError
 
-    @abstractmethod
     def set_group_card(self, group_id: ID, user_id: ID, card: str):
         raise NotImplementedError
 
-    @abstractmethod
     def set_group_name(self, group_id: ID, group_name: str):
         raise NotImplementedError
 
-    @abstractmethod
     def set_group_leave(self, group_id: ID):
         raise NotImplementedError
 
-    @abstractmethod
     def set_group_special_title(
         self, group_id: ID, user_id: ID, special_title: str, duration: int
     ):
         raise NotImplementedError
 
-    @abstractmethod
     def set_friend_add_request(self, flag: ID, approve: bool, remark: str):
         raise NotImplementedError
 
-    @abstractmethod
     def set_group_add_request(self, flag: ID, sub_type: str, approve: bool, reason):
         raise NotImplementedError
 
-    @abstractmethod
     def get_login_info(self) -> Result:
         raise NotImplementedError
 
-    @abstractmethod
     def get_stranger_info(self, user_id: ID) -> Result:
         raise NotImplementedError
 
-    @abstractmethod
     def get_friend_list(self) -> Result:
         raise NotImplementedError
 
-    @abstractmethod
     def get_group_info(self) -> Result:
         raise NotImplementedError
 
-    @abstractmethod
     def get_group_list(self) -> Result:
         raise NotImplementedError
 
-    @abstractmethod
     def get_group_member_info(self) -> Result:
         raise NotImplementedError
 
-    @abstractmethod
     def get_group_member_list(self) -> Result:
         raise NotImplementedError

@@ -81,9 +81,9 @@ def load_plugins():
                     logger.opt(colors=True).success(f"[<e>{plugin.name}</e>] is loaded")
                     continue
                 else:
-                    skip_result = path.stem + ".main.Event" + " not found"
+                    skip_result = f"{path.stem}.main.Event not found"
             else:
-                skip_result = path.stem + ".main" + " not found"
+                skip_result = f"{path.stem}.main not found"
             logger.opt(colors=True).error(
                 f"<r><bg #f8bbd0>[{path.stem}] is skipped: {skip_result}</bg #f8bbd0></r>"
             )

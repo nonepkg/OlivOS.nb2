@@ -43,9 +43,7 @@ class Message_templet(object):
 
     def __str__(self):
         tmp_res = self.__dict__.copy()
-        tmp_res_data = []
-        for data_this in tmp_res["data"]:
-            tmp_res_data.append(data_this.__dict__)
+        tmp_res_data = [data_this.__dict__ for data_this in tmp_res["data"]]
         tmp_res["data"] = tmp_res_data
         return str(tmp_res)
 
@@ -53,10 +51,10 @@ class Message_templet(object):
         self.data.append(para_append)
 
     def match_str(self, src_str, match_str_src):
-        if len(src_str) >= len(match_str_src):
-            if src_str[: len(match_str_src)] == match_str_src:
-                return True
-        return False
+        return (
+            len(src_str) >= len(match_str_src)
+            and src_str[: len(match_str_src)] == match_str_src
+        )
 
     def get_from_dict(self, src_dict, key_list, default_val=None):
         tmp_src_dict = src_dict
@@ -70,32 +68,21 @@ class Message_templet(object):
     def get(self, get_type):
         res = None
         if not self.active:
-            res = str(self)
+            return str(self)
         elif get_type == "olivos_para":
-            res = self
+            return self
         elif get_type == "olivos_string":
-            res = ""
-            for data_this in self.data:
-                res += data_this.OP()
+            return "".join(data_this.OP() for data_this in self.data)
         elif get_type == "old_string":
-            res = ""
-            for data_this in self.data:
-                res += data_this.CQ()
+            return "".join(data_this.CQ() for data_this in self.data)
         elif get_type == "fanbook_string":
-            res = ""
-            for data_this in self.data:
-                res += data_this.fanbook()
+            return "".join(data_this.fanbook() for data_this in self.data)
         elif get_type == "dodo_string":
-            res = ""
-            for data_this in self.data:
-                res += data_this.dodo()
+            return "".join(data_this.dodo() for data_this in self.data)
         elif get_type == "qqGuild_string":
-            res = ""
-            for data_this in self.data:
-                res += data_this.OP()
+            return "".join(data_this.OP() for data_this in self.data)
         else:
-            res = str(self)
-        return res
+            return str(self)
 
     def init_data(self):
         if self.mode_rx == "olivos_para":
@@ -112,11 +99,13 @@ class Message_templet(object):
             self.init_from_angle_code_string()
 
     def init_from_olivos_para(self):
-        tmp_data = []
         if type(self.data_raw) == list:
-            for data_raw_this in self.data_raw:
-                if data_raw_this.__class__.__base__ == PARA_templet:
-                    tmp_data.append(data_raw_this)
+            tmp_data = [
+                data_raw_this
+                for data_raw_this in self.data_raw
+                if data_raw_this.__class__.__base__ == PARA_templet
+            ]
+
             self.data = tmp_data
         else:
             self.active = False
@@ -124,12 +113,12 @@ class Message_templet(object):
     def init_from_code_string(self, code_key):
         tmp_data_raw = str(self.data_raw)
         tmp_data = []
-        it_data = range(0, len(tmp_data_raw) + 1)
+        it_data = range(len(tmp_data_raw) + 1)
         it_data_base = 0
         tmp_data_type = "string"
         for it_data_this in it_data:
             if tmp_data_type == "string" and self.match_str(
-                tmp_data_raw[it_data_this:], "[" + code_key + ":"
+                tmp_data_raw[it_data_this:], f"[{code_key}:"
             ):
                 tmp_para_this = None
                 if it_data_this > it_data_base:
@@ -147,7 +136,7 @@ class Message_templet(object):
                         it_data_base : it_data_this + 1
                     ]
                     tmp_data_raw_this = tmp_data_raw_this_bak
-                    tmp_data_raw_this = tmp_data_raw_this[len("[" + code_key + ":") :]
+                    tmp_data_raw_this = tmp_data_raw_this[len(f"[{code_key}:"):]
                     tmp_data_raw_this = tmp_data_raw_this[: -len("]")]
                     tmp_data_raw_this_list = tmp_data_raw_this.split(",")
                     tmp_data_type_key = tmp_data_raw_this_list[0]
@@ -306,7 +295,7 @@ class Message_templet(object):
     def init_from_fanbook_code_string(self):
         tmp_data_raw = str(self.data_raw)
         tmp_data = []
-        it_data = range(0, len(tmp_data_raw) + 1)
+        it_data = range(len(tmp_data_raw) + 1)
         it_data_base = 0
         tmp_data_type = "string"
         for it_data_this in it_data:
@@ -358,7 +347,7 @@ class Message_templet(object):
     def init_from_angle_code_string(self):
         tmp_data_raw = str(self.data_raw)
         tmp_data = []
-        it_data = range(0, len(tmp_data_raw) + 1)
+        it_data = range(len(tmp_data_raw) + 1)
         it_data_base = 0
         tmp_data_type = "string"
         for it_data_this in it_data:
@@ -426,15 +415,17 @@ class PARA_templet(object):
                 for key_this in self.data:
                     if self.data[key_this] != None:
                         code_tmp += "@"
-                        code_tmp += "!" + str(self.data[key_this])
+                        code_tmp += f"!{str(self.data[key_this])}"
         elif type(self) == PARA.text:
-            if self.data != None:
-                if type(self.data["text"]) is str:
-                    return self.data["text"]
-                else:
-                    return str(self.data["text"])
-            else:
+            if self.data is None:
                 return ""
+            else:
+                return (
+                    self.data["text"]
+                    if type(self.data["text"]) is str
+                    else str(self.data["text"])
+                )
+
         code_tmp += "}"
         return code_tmp
 
@@ -445,42 +436,43 @@ class PARA_templet(object):
                 for key_this in self.data:
                     if self.data[key_this] != None:
                         code_tmp += "@"
-                        code_tmp += "!" + str(self.data[key_this])
+                        code_tmp += f"!{str(self.data[key_this])}"
         elif type(self) == PARA.text:
-            if self.data != None:
-                if type(self.data["text"]) is str:
-                    return self.data["text"]
-                else:
-                    return str(self.data["text"])
-            else:
+            if self.data is None:
                 return ""
+            else:
+                return (
+                    self.data["text"]
+                    if type(self.data["text"]) is str
+                    else str(self.data["text"])
+                )
+
         code_tmp += ">"
         return code_tmp
 
     def get_string_by_key(self, code_key):
-        code_tmp = "[" + code_key + ":" + self.type
+        code_tmp = f"[{code_key}:{self.type}"
         if self.data != None:
             for key_this in self.data:
                 if self.data[key_this] != None:
-                    code_tmp += "," + key_this + "=" + str(self.data[key_this])
+                    code_tmp += f",{key_this}={str(self.data[key_this])}"
         code_tmp += "]"
         return code_tmp
 
     def PARA(self):
         PARA_tmp = self.cut()
-        if self.data == None:
-            PARA_tmp.data = dict()
+        if self.data is None:
+            PARA_tmp.data = {}
         return json.dumps(obj=PARA_tmp.__dict__)
 
     def copy(self):
-        copy_tmp = PARA_templet(self.type, self.data.copy())
-        return copy_tmp
+        return PARA_templet(self.type, self.data.copy())
 
     def cut(self):
         copy_tmp = self.copy()
         if copy_tmp.data != None:
             for key_this in self.data:
-                if copy_tmp.data[key_this] == None:
+                if copy_tmp.data[key_this] is None:
                     del copy_tmp.data[key_this]
                 else:
                     copy_tmp.data[key_this] = str(copy_tmp.data[key_this])
@@ -500,13 +492,15 @@ class PARA(object):
                 self["text"] = text
 
         def get_string_by_key(self, code_key):
-            if self.data != None:
-                if type(self.data["text"]) is str:
-                    return self.data["text"]
-                else:
-                    return str(self.data["text"])
-            else:
+            if self.data is None:
                 return ""
+
+            else:
+                return (
+                    self.data["text"]
+                    if type(self.data["text"]) is str
+                    else str(self.data["text"])
+                )
 
     class face(PARA_templet):
         def __init__(self, id):
@@ -534,20 +528,18 @@ class PARA(object):
                 self["timeout"] = timeout
 
         def get_string_by_key(self, code_key):
-            code_tmp = "[" + code_key + ":" + self.type
+            code_tmp = f"[{code_key}:{self.type}"
             if self.data != None:
                 for key_this in self.data:
                     if self.data[key_this] != None:
                         if code_key == "CQ" and key_this == "file":
-                            code_tmp += "," + key_this + "="
-                            if self.data["url"] != None:
-                                code_tmp += str(self.data["url"])
-                            else:
+                            code_tmp += f",{key_this}="
+                            if self.data["url"] is None:
                                 code_tmp += str(self.data[key_this])
-                        elif code_key == "CQ" and key_this == "url":
-                            pass
-                        else:
-                            code_tmp += "," + key_this + "=" + str(self.data[key_this])
+                            else:
+                                code_tmp += str(self.data["url"])
+                        elif code_key != "CQ" or key_this != "url":
+                            code_tmp += f",{key_this}={str(self.data[key_this])}"
             code_tmp += "]"
             return code_tmp
 
@@ -591,14 +583,14 @@ class PARA(object):
                 self["id"] = id
 
         def get_string_by_key(self, code_key):
-            code_tmp = "[" + code_key + ":" + self.type
+            code_tmp = f"[{code_key}:{self.type}"
             if self.data != None:
                 for key_this in self.data:
                     if self.data[key_this] != None:
                         if code_key == "CQ" and key_this == "id":
-                            code_tmp += ",qq=" + str(self.data[key_this])
+                            code_tmp += f",qq={str(self.data[key_this])}"
                         else:
-                            code_tmp += "," + key_this + "=" + str(self.data[key_this])
+                            code_tmp += f",{key_this}={str(self.data[key_this])}"
             code_tmp += "]"
             return code_tmp
 

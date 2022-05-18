@@ -17,10 +17,7 @@ from OlivOS.middlewares import Result
 
 class OlivOSEvent(BaseOlivOSEvent):
     def process_bot(self, bot: Bot):
-        self.platform = {}
-        self.platform["sdk"] = "telegram"
-        self.platform["platform"] = "telegram"
-        self.platform["model"] = "nonebot"
+        self.platform = {"sdk": "telegram", "platform": "telegram", "model": "nonebot"}
         self.bot_info = BotInfo(bot)
         self.base_info["self_id"] = bot.self_id
 
@@ -40,11 +37,13 @@ class OlivOSEvent(BaseOlivOSEvent):
             self.active = True
             self.plugin_info["func_type"] = func_type_map[type(event)]
         if isinstance(event, MessageEvent):
-            self.data.sender = {}
-            self.data.sender["nickname"] = event.from_.first_name  # type: ignore
-            self.data.sender["user_id"] = event.from_.id  # type: ignore
-            self.data.sender["name"] = event.from_.first_name  # type: ignore
-            self.data.sender["id"] = event.from_.id  # type: ignore
+            self.data.sender = {
+                "nickname": event.from_.first_name,
+                "user_id": event.from_.id,
+                "name": event.from_.first_name,
+                "id": event.from_.id,
+            }
+
             self.data.extend = {}
             message = Message_templet("old_string", str(event.message))
             self.data.raw_message = message

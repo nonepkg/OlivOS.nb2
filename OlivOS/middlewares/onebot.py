@@ -17,10 +17,7 @@ from OlivOS.middlewares import Result
 
 class OlivOSEvent(BaseOlivOSEvent):
     def process_bot(self, bot: Bot):
-        self.platform = {}
-        self.platform["sdk"] = "onebot"
-        self.platform["platform"] = "qq"
-        self.platform["model"] = "nonebot"
+        self.platform = {"sdk": "onebot", "platform": "qq", "model": "nonebot"}
         self.bot_info = BotInfo(bot)
 
     def process_event(self, event: Event):

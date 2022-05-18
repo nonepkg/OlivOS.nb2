@@ -21,11 +21,12 @@ def import_middleware(*adapters):
         adapter = adapter.split(maxsplit=1)[0].lower()
         if adapter in middlewares_map:
             module = importlib.import_module(
-                "OlivOS.middlewares." + middlewares_map[adapter]
+                f"OlivOS.middlewares.{middlewares_map[adapter]}"
             )
+
             _middlewares[adapter] = getattr(module, "OlivOSEvent")
         else:
-            logger.warning("Can not find middleware for Adapter " + adapter)
+            logger.warning(f"Can not find middleware for Adapter {adapter}")
 
 
 ID = Union[int, str]
@@ -60,8 +61,7 @@ class BotInfo:
 
 class Proc:
     def __init__(self) -> None:
-        self.Proc_data = {}
-        self.Proc_data["bot_info_dict"] = {}
+        self.Proc_data = {"bot_info_dict": {}}
         for bot in get_bots().values():
             bot_info = BotInfo(bot)
             self.Proc_data["bot_info_dict"][bot_info.hash] = bot_info
@@ -85,32 +85,21 @@ class OlivOSEvent(ABC):
         event: Optional[Event] = None,
         log_func: Optional[Callable] = None,
     ):
-        self.platform = {}
-        self.platform["sdk"] = None
-        self.platform["platform"] = None
-        self.platform["model"] = None
-
+        self.platform = {"sdk": None, "platform": None, "model": None}
         self.active = False
         self.blocked = False
 
         self.log_func = log_func
 
-        self.base_info = {}
-        self.base_info["time"] = None
-        self.base_info["self_id"] = None
-        self.base_info["type"] = None
-
-        self.plugin_info = {}
-        self.plugin_info["func_type"] = None
-        self.plugin_info[
-            "message_mode_rx"
-        ] = "old_string"  # OlivOS_message_mode_rx_default
-        self.plugin_info[
-            "message_mode_tx"
-        ] = "olivos_string"  # OlivOS_message_mode_rx_default
-        self.plugin_info["name"] = "unity"
-        self.plugin_info["namespace"] = "unity"
-        self.plugin_info["tx_queue"] = []
+        self.base_info = {"time": None, "self_id": None, "type": None}
+        self.plugin_info = {
+            "func_type": None,
+            "message_mode_rx": "old_string",  # OlivOS_message_mode_rx_default
+            "message_mode_tx": "olivos_string",  # OlivOS_message_mode_rx_default
+            "name": "unity",
+            "namespace": "unity",
+            "tx_queue": [],
+        }
 
         if bot:
             self.process_bot(bot)

@@ -14,18 +14,43 @@ _  / / /_  /  __  / __ | / /_  / / /____ \
 @Desc      :   None
 """
 
+import re
+import json
+import traceback  # nopycln: import
+
 import OlivOS
 
 # platform sdk model
 dictMessageType = {
     "qq": {"onebot": {"default": "old_string", "gocqhttp_show": "old_string"}},
-    "telegram": {"telegram_poll": {"default": "old_string"}},
-    "fanbook": {"fanbook_poll": {"default": "fanbook_string"}},
+    "qqGuild": {
+        "qqGuild_link": {
+            "default": "olivos_para",
+            "private": "olivos_para",
+            "public": "olivos_para",
+        }
+    },
+    "telegram": {"telegram_poll": {"default": "olivos_para"}},
+    "fanbook": {"fanbook_poll": {"default": "olivos_para", "private": "olivos_para"}},
+    "kaiheila": {"kaiheila_link": {"default": "olivos_para"}},
+    "discord": {"discord_link": {"default": "olivos_para"}},
     "dodo": {
+        "dodo_link": {"default": "olivos_para"},
         "dodo_poll": {"default": "olivos_para"},
         "dodobot_ea": {"default": "olivos_para"},
     },
     "fake": {"fake": {"default": "olivos_para"}},
+    "terminal": {
+        "terminal_link": {
+            "default": "olivos_string",
+            "postapi": "olivos_string",
+            "ff14": "olivos_string",
+        }
+    },
+    "hackChat": {"hackChat_link": {"default": "olivos_string"}},
+    "biliLive": {
+        "biliLive_link": {"default": "olivos_string", "login": "olivos_string"}
+    },
 }
 
 
@@ -93,6 +118,10 @@ class Message_templet(object):
             res = ""
             for data_this in self.data:
                 res += data_this.OP()
+        elif get_type == "kaiheila_string":
+            res = ""
+            for data_this in self.data:
+                res += data_this.kaiheila()
         else:
             res = str(self)
         return res
@@ -110,6 +139,10 @@ class Message_templet(object):
             self.init_from_angle_code_string()
         elif self.mode_rx == "qqGuild_string":
             self.init_from_angle_code_string()
+        elif self.mode_rx == "kaiheila_string":
+            self.init_from_kaiheila_code_string()
+        elif self.mode_rx == "discord_string":
+            self.init_from_discord_code_string()
 
     def init_from_olivos_para(self):
         tmp_data = []
@@ -407,6 +440,20 @@ class Message_templet(object):
                 it_data_base = it_data_this
         self.data = tmp_data
 
+    def init_from_kaiheila_code_string(self):
+        tmp_data_raw = str(self.data_raw)
+        tmp_data_raw = re.sub(r"\(met\)(\d+)\(met\)", r"[OP:at,id=\1]", tmp_data_raw)
+        tmp_data_raw = re.sub(r"\\(.)", r"\1", tmp_data_raw)
+        self.data_raw = tmp_data_raw
+        self.init_from_code_string("OP")
+
+    def init_from_discord_code_string(self):
+        tmp_data_raw = str(self.data_raw)
+        tmp_data_raw = re.sub(r"<@(\d+)>", r"[OP:at,id=\1]", tmp_data_raw)
+        # tmp_data_raw = re.sub(r'\\(.)', r'\1', tmp_data_raw)
+        self.data_raw = tmp_data_raw
+        self.init_from_code_string("OP")
+
 
 class PARA_templet(object):
     def __init__(self, type=None, data=None):
@@ -419,16 +466,35 @@ class PARA_templet(object):
     def OP(self):
         return self.get_string_by_key("OP")
 
+    def kaiheila(self):
+        code_tmp = "${"
+        if type(self) == PARA.at:
+            if self.data is not None:
+                for key_this in self.data:
+                    if self.data[key_this] is not None:
+                        code_tmp += "@"
+                        code_tmp += "#" + str(self.data[key_this])
+        elif type(self) == PARA.text:
+            if self.data is not None:
+                if type(self.data["text"]) is str:
+                    return self.data["text"]
+                else:
+                    return str(self.data["text"])
+            else:
+                return ""
+        code_tmp += "}"
+        return code_tmp
+
     def fanbook(self):
         code_tmp = "${"
         if type(self) == PARA.at:
-            if self.data != None:
+            if self.data is not None:
                 for key_this in self.data:
-                    if self.data[key_this] != None:
+                    if self.data[key_this] is not None:
                         code_tmp += "@"
                         code_tmp += "!" + str(self.data[key_this])
         elif type(self) == PARA.text:
-            if self.data != None:
+            if self.data is not None:
                 if type(self.data["text"]) is str:
                     return self.data["text"]
                 else:
@@ -441,13 +507,13 @@ class PARA_templet(object):
     def dodo(self):
         code_tmp = "<"
         if type(self) == PARA.at:
-            if self.data != None:
+            if self.data is not None:
                 for key_this in self.data:
-                    if self.data[key_this] != None:
+                    if self.data[key_this] is not None:
                         code_tmp += "@"
                         code_tmp += "!" + str(self.data[key_this])
         elif type(self) == PARA.text:
-            if self.data != None:
+            if self.data is not None:
                 if type(self.data["text"]) is str:
                     return self.data["text"]
                 else:
@@ -459,16 +525,16 @@ class PARA_templet(object):
 
     def get_string_by_key(self, code_key):
         code_tmp = "[" + code_key + ":" + self.type
-        if self.data != None:
+        if self.data is not None:
             for key_this in self.data:
-                if self.data[key_this] != None:
+                if self.data[key_this] is not None:
                     code_tmp += "," + key_this + "=" + str(self.data[key_this])
         code_tmp += "]"
         return code_tmp
 
     def PARA(self):
         PARA_tmp = self.cut()
-        if self.data == None:
+        if self.data is None:
             PARA_tmp.data = dict()
         return json.dumps(obj=PARA_tmp.__dict__)
 
@@ -478,9 +544,9 @@ class PARA_templet(object):
 
     def cut(self):
         copy_tmp = self.copy()
-        if copy_tmp.data != None:
+        if copy_tmp.data is not None:
             for key_this in self.data:
-                if copy_tmp.data[key_this] == None:
+                if copy_tmp.data[key_this] is None:
                     del copy_tmp.data[key_this]
                 else:
                     copy_tmp.data[key_this] = str(copy_tmp.data[key_this])
@@ -500,7 +566,7 @@ class PARA(object):
                 self["text"] = text
 
         def get_string_by_key(self, code_key):
-            if self.data != None:
+            if self.data is not None:
                 if type(self.data["text"]) is str:
                     return self.data["text"]
                 else:
@@ -535,12 +601,12 @@ class PARA(object):
 
         def get_string_by_key(self, code_key):
             code_tmp = "[" + code_key + ":" + self.type
-            if self.data != None:
+            if self.data is not None:
                 for key_this in self.data:
-                    if self.data[key_this] != None:
+                    if self.data[key_this] is not None:
                         if code_key == "CQ" and key_this == "file":
                             code_tmp += "," + key_this + "="
-                            if self.data["url"] != None:
+                            if self.data["url"] is not None:
                                 code_tmp += str(self.data["url"])
                             else:
                                 code_tmp += str(self.data[key_this])
@@ -592,9 +658,9 @@ class PARA(object):
 
         def get_string_by_key(self, code_key):
             code_tmp = "[" + code_key + ":" + self.type
-            if self.data != None:
+            if self.data is not None:
                 for key_this in self.data:
-                    if self.data[key_this] != None:
+                    if self.data[key_this] is not None:
                         if code_key == "CQ" and key_this == "id":
                             code_tmp += ",qq=" + str(self.data[key_this])
                         else:
@@ -615,7 +681,7 @@ class PARA(object):
             PARA_templet.__init__(self, "shake", None)
 
     class poke(PARA_templet):
-        def __init__(self, type, id, name=None):
+        def __init__(self, id, type=None, name=None):
             PARA_templet.__init__(self, "poke", self.data_T(type, id, name))
 
         class data_T(dict):

@@ -1,16 +1,16 @@
-import importlib
-import inspect
+import sys
 import json
 import shutil
-import sys
+import inspect
 import zipfile
+import importlib
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Dict, List, Optional, Set, Type
+from typing import Any, Set, Dict, List, Type, Optional
 
 from nonebot.log import logger
 
-from OlivOS.middlewares import OlivOSEvent, Proc, _middlewares
+from .middlewares import Proc, OlivOSEvent, _middlewares
 
 
 class Plugin:

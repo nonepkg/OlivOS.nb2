@@ -2,12 +2,13 @@ import asyncio
 import hashlib
 import importlib
 from abc import ABC, abstractmethod
-from typing import Awaitable, Callable, Dict, Optional, Type, Union
+from typing import Dict, Type, Union, Callable, Optional, Awaitable
 
+from pydantic import BaseModel
+
+from nonebot.log import logger
 from nonebot import get_bot, get_bots
 from nonebot.adapters import Bot, Event
-from nonebot.log import logger
-from pydantic import BaseModel
 
 middlewares_map = {"onebot": "onebot", "telegram": "telegram"}
 sdk_map = {"onebot": "onebot", "telegram": "telegram"}
@@ -21,7 +22,7 @@ def import_middleware(*adapters):
         adapter = adapter.split(maxsplit=1)[0].lower()
         if adapter in middlewares_map:
             module = importlib.import_module(
-                f"OlivOS.middlewares.{middlewares_map[adapter]}"
+                f"OlivOS.nonebot.middlewares.{middlewares_map[adapter]}"
             )
 
             _middlewares[adapter] = getattr(module, "OlivOSEvent")

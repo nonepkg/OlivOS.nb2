@@ -2,17 +2,17 @@
 https://github.com/OlivOS-Team/OlivOS/blob/main/OlivOS/onebotSDK.py
 """
 
-from typing import Dict, Optional, Type, cast
+from typing import Dict, Type, Optional, cast
+
+from OlivOS.messageAPI import Message_templet
 
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11.bot import Bot
-from nonebot.adapters.onebot.v11.event import *  # type:ignore
 from nonebot.adapters.onebot.v11.message import Message
+from nonebot.adapters.onebot.v11.event import *  # type:ignore
 
-from OlivOS.messageAPI import Message_templet
-from OlivOS.middlewares import ID, MSG, BotInfo
-from OlivOS.middlewares import OlivOSEvent as BaseOlivOSEvent
-from OlivOS.middlewares import Result
+from . import ID, MSG, Result, BotInfo
+from . import OlivOSEvent as BaseOlivOSEvent
 
 
 class OlivOSEvent(BaseOlivOSEvent):

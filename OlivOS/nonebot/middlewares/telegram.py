@@ -2,17 +2,17 @@
 https://github.com/OlivOS-Team/OlivOS/blob/main/OlivOS/telegramSDK.py
 """
 
-from typing import Dict, Optional, Type, cast
+from typing import Dict, Type, Optional
+
+from OlivOS.messageAPI import Message_templet
 
 from nonebot import get_bot
 from nonebot.adapters.telegram.bot import Bot
-from nonebot.adapters.telegram.event import *  # type:ignore
 from nonebot.adapters.telegram.message import Message
+from nonebot.adapters.telegram.event import *  # type:ignore
 
-from OlivOS.messageAPI import Message_templet
-from OlivOS.middlewares import ID, MSG, BotInfo
-from OlivOS.middlewares import OlivOSEvent as BaseOlivOSEvent
-from OlivOS.middlewares import Result
+from . import MSG, BotInfo
+from . import OlivOSEvent as BaseOlivOSEvent
 
 
 class OlivOSEvent(BaseOlivOSEvent):

@@ -9,6 +9,7 @@ packages = [{ include = "OlivOS" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+olivos = "^0.10.2"
 nonebot2 = "^2.0.0rc1"
 nonebot-adapter-onebot = { version = "^2.0.0-beta.1", optional = true }
 nonebot-adapter-telegram = { version = "^0.1.0-beta.0", optional = true }

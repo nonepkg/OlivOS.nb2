@@ -1,9 +1,9 @@
 from nonebot.plugin import on
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event
-from OlivOS.nonebot.plugin import load_plugins, get_loaded_plugins
 
-from .middlewares import Proc, _middlewares, import_middleware
+from .middlewares import _middlewares, import_middleware
+from .plugin import Proc, load_plugins, get_loaded_plugins
 
 driver = get_driver()
 matcher = on()

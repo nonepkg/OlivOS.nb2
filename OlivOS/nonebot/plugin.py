@@ -8,9 +8,22 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any, Set, Dict, List, Type, Optional
 
+from nonebot import get_bots
 from nonebot.log import logger
 
-from .middlewares import Proc, OlivOSEvent, _middlewares
+from .middlewares import BotInfo, OlivOSEvent, _middlewares
+
+
+class Proc:
+    def __init__(self) -> None:
+        self.Proc_data = {"bot_info_dict": {}}
+        for bot in get_bots().values():
+            bot_info = BotInfo(bot)
+            self.Proc_data["bot_info_dict"][bot_info.hash] = bot_info
+        self.log = lambda log_level, log_message, log_segment: logger.info(log_message)
+
+    def get_plugin_list(self):
+        return [plugin.namespace for plugin in get_loaded_plugins()]
 
 
 class Plugin:

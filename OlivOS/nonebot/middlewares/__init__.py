@@ -6,8 +6,8 @@ from typing import Dict, Type, Union, Callable, Optional, Awaitable
 
 from pydantic import BaseModel
 
+from nonebot import get_bot
 from nonebot.log import logger
-from nonebot import get_bot, get_bots
 from nonebot.adapters import Bot, Event
 
 middlewares_map = {"onebot": "onebot", "telegram": "telegram"}
@@ -58,15 +58,6 @@ class BotInfo:
         hash_tmp.update(str(self.platform["platform"]).encode(encoding="UTF-8"))
         # hash_tmp.update(str(self.platform["model"]).encode(encoding='UTF-8'))
         self.hash = hash_tmp.hexdigest()
-
-
-class Proc:
-    def __init__(self) -> None:
-        self.Proc_data = {"bot_info_dict": {}}
-        for bot in get_bots().values():
-            bot_info = BotInfo(bot)
-            self.Proc_data["bot_info_dict"][bot_info.hash] = bot_info
-        self.log = lambda log_level, log_message, log_segment: logger.info(log_message)
 
 
 class OlivOSEvent(ABC):

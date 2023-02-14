@@ -10,16 +10,15 @@ from nonebot import get_bot
 from nonebot.log import logger
 from nonebot.adapters import Bot, Event
 
-middlewares_map = {"onebot": "onebot", "telegram": "telegram"}
-sdk_map = {"onebot": "onebot", "telegram": "telegram"}
-platform_map = {"onebot": "qq", "telegram": "telegram"}
+middlewares_map = {"OneBot V11": "onebot", "Telegram": "telegram"}
+sdk_map = {"OneBot V11": "onebot", "Telegram": "telegram"}
+platform_map = {"OneBot V11": "onebot", "Telegram": "telegram"}
 
 _middlewares: Dict[str, Type["OlivOSEvent"]] = {}
 
 
 def import_middleware(*adapters):
     for adapter in adapters:
-        adapter = adapter.split(maxsplit=1)[0].lower()
         if adapter in middlewares_map:
             module = importlib.import_module(
                 f"OlivOS.nonebot.middlewares.{middlewares_map[adapter]}"
@@ -48,7 +47,7 @@ class BotInfo:
     def __init__(self, bot: Bot) -> None:
         self.id = bot.self_id
         self.platform = {"model": "nonebot"}
-        type = bot.type.split(maxsplit=1)[0].lower()
+        type = bot.type
         self.platform["sdk"] = sdk_map.get(type, type)
         self.platform["platform"] = platform_map.get(type, type)
 

@@ -9,7 +9,30 @@ from OlivOS.messageAPI import Message_templet
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.message import Message
-from nonebot.adapters.onebot.v11.event import *  # type:ignore
+from nonebot.adapters.onebot.v11.event import (
+    Event,
+    PrivateMessageEvent,
+    GroupMessageEvent,
+    GroupUploadNoticeEvent,
+    GroupAdminNoticeEvent,
+    GroupDecreaseNoticeEvent,
+    GroupIncreaseNoticeEvent,
+    GroupBanNoticeEvent,
+    FriendAddNoticeEvent,
+    GroupRecallNoticeEvent,
+    FriendRecallNoticeEvent,
+    PokeNotifyEvent,
+    LuckyKingNotifyEvent,
+    HonorNotifyEvent,
+    FriendRequestEvent,
+    GroupRequestEvent,
+    LifecycleMetaEvent,
+    HeartbeatMetaEvent,
+    MessageEvent,
+    NoticeEvent,
+    NotifyEvent,
+    MetaEvent,
+)
 
 from . import ID, MSG, Result, BotInfo
 from . import OlivOSEvent as BaseOlivOSEvent
@@ -53,8 +76,9 @@ class OlivOSEvent(BaseOlivOSEvent):
             self.plugin_info["func_type"] = func_type_map[type(event)]
         if isinstance(event, MessageEvent):
             self.data.message = event.raw_message
-            self.data.sender["name"] = event.sender.nickname  # type: ignore
-            self.data.sender["id"] = event.sender.user_id  # type: ignore
+            self.data.sender = {}
+            self.data.sender["name"] = event.sender.nickname
+            self.data.sender["id"] = event.sender.user_id
             self.data.extend = {}
             self.data.message_sdk = Message_templet("old_string", event.raw_message)
             self.data.raw_message_sdk = Message_templet("old_string", event.raw_message)

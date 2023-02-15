@@ -2,8 +2,7 @@ import asyncio
 import hashlib
 import importlib
 from abc import ABC, abstractmethod
-from typing import Dict, Type, Union, Callable, Optional, Awaitable
-
+from typing import Any, Dict, Type, Union, Callable, Optional, Coroutine
 from pydantic import BaseModel
 
 from nonebot import get_bot
@@ -76,13 +75,13 @@ class OlivOSEvent(ABC):
         event: Optional[Event] = None,
         log_func: Optional[Callable] = None,
     ):
-        self.platform = {"sdk": None, "platform": None, "model": None}
+        self.platform: Dict[str, Any] = {"sdk": None, "platform": None, "model": None}
         self.active = False
         self.blocked = False
 
         self.log_func = log_func
 
-        self.base_info = {"time": None, "self_id": None, "type": None}
+        self.base_info: Dict[str, Any] = {"time": None, "self_id": None, "type": None}
         self.plugin_info = {
             "func_type": None,
             "message_mode_rx": "old_string",  # OlivOS_message_mode_rx_default
@@ -131,7 +130,7 @@ class OlivOSEvent(ABC):
                     self.plugin_info["message_mode_tx"]
                 )
 
-    def run_async(self, func: Awaitable):
+    def run_async(self, func: Coroutine):
         task = asyncio.create_task(func)
         if task.done():
             return task.result()

@@ -3,13 +3,18 @@ https://github.com/OlivOS-Team/OlivOS/blob/main/OlivOS/telegramSDK.py
 """
 
 from typing import Dict, Type, Optional
-
+from datetime import datetime
 from OlivOS.messageAPI import Message_templet
 
 from nonebot import get_bot
 from nonebot.adapters.telegram.bot import Bot
 from nonebot.adapters.telegram.message import Message
-from nonebot.adapters.telegram.event import *  # type:ignore
+from nonebot.adapters.telegram.event import (
+    Event,
+    MessageEvent,
+    PrivateMessageEvent,
+    GroupMessageEvent,
+)
 
 from . import MSG, BotInfo
 from . import OlivOSEvent as BaseOlivOSEvent
@@ -24,7 +29,9 @@ class OlivOSEvent(BaseOlivOSEvent):
     def process_event(self, event: Event):
         self.data = self.Data(**event.dict())
 
-        self.base_info["time"] = event.date  # type:ignore
+        self.base_info["time"] = (
+            getattr(event, "time", None) or datetime.now().timestamp()
+        )
         self.base_info["type"] = event.get_type()
 
         self.plugin_info["message_mode_rx"] = "old_string"
@@ -36,7 +43,9 @@ class OlivOSEvent(BaseOlivOSEvent):
         if type(event) in func_type_map:
             self.active = True
             self.plugin_info["func_type"] = func_type_map[type(event)]
-        if isinstance(event, MessageEvent):
+        if isinstance(event, GroupMessageEvent) or isinstance(
+            event, PrivateMessageEvent
+        ):
             self.data.sender = {
                 "nickname": event.from_.first_name,
                 "user_id": event.from_.id,

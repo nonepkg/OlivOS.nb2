@@ -1,9 +1,13 @@
-from nonebot.plugin import on
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event
+from nonebot.plugin import PluginMetadata, on
 
 from .middlewares import _middlewares, import_middleware
 from .plugin import Proc, load_plugins, get_loaded_plugins
+
+__plugin_meta__ = PluginMetadata(
+    name="OlivOS.nb2", description="在 NoneBot2 中加载 OlivOS 插件", usage=""
+)
 
 driver = get_driver()
 matcher = on()

@@ -1,24 +1,18 @@
-[tool.poetry]
+[project]
 name = "OlivOS.nb2"
-version = "0.2.0"
+version = "0.2.1"
 description = "Load OlivOS plugin in NoneBot2"
-authors = ["jigsaw <j1g5aw@foxmail.com>"]
-license = "AGPL-3.0-only"
+authors = [{ name = "jigsaw", email = "j1g5aw@foxmail.com" }]
+dependencies = ["olivos<1.0.0,>=0.10.2", "nonebot2<3.0.0,>=2.0.0rc1"]
+requires-python = ">=3.8,<4.0"
 readme = "README.md"
-packages = [{ include = "OlivOS" }]
+license = { text = "AGPL-3.0-only" }
 
-[tool.poetry.dependencies]
-python = "^3.8"
-olivos = "^0.10.2"
-nonebot2 = "^2.0.0rc1"
-nonebot-adapter-onebot = { version = "^2.0.0-beta.1", optional = true }
-nonebot-adapter-telegram = { version = "^0.1.0-beta.0", optional = true }
+[project.optional-dependencies]
+onebot = ["nonebot-adapter-onebot<3.0.0.0,>=2.0.0-beta.1"]
+telegram = ["nonebot-adapter-telegram<1.0.0.0,>=0.1.0-beta.0"]
 
-[tool.poetry.extras]
-onebot = ["nonebot-adapter-onebot"]
-telegram = ["nonebot-adapter-telegram"]
-
-[tool.poetry.group.dev.dependencies]
+[tool.pdm.dev.dependencies]
 nb-cli = "^0.6.8"
 pycln = "^2.1.2"
 isort = "^5.10.1"
@@ -46,6 +40,12 @@ extra_standard_library = ["typing_extensions"]
 path = "."
 all = false
 
+[tool.pyright]
+exclude = ["__pypackages__"]
+
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"
+
+[tool.pdm.build]
+includes = ["OlivOS"]

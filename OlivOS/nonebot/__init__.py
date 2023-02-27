@@ -1,5 +1,6 @@
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event
+from nonebot.plugin.plugin import Matcher
 from nonebot.plugin import PluginMetadata, on
 
 from .middlewares import _middlewares, import_middleware
@@ -33,7 +34,7 @@ async def _(bot: Bot):
 
 
 @matcher.handle()
-async def _(bot: Bot, event: Event):
+async def _(bot: Bot, event: Event, matcher: Matcher):
     if bot.type in _middlewares:
         ovo_event = _middlewares[bot.type](bot, event)
         if ovo_event.plugin_info["func_type"]:
@@ -42,6 +43,7 @@ async def _(bot: Bot, event: Event):
                     getattr(p.route, ovo_event.plugin_info["func_type"])(
                         ovo_event, _proc
                     )
+                    matcher.stop_propagation()
 
 
 @driver.on_bot_disconnect

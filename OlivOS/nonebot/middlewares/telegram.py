@@ -2,8 +2,9 @@
 https://github.com/OlivOS-Team/OlivOS/blob/main/OlivOS/telegramSDK.py
 """
 
-from typing import Dict, Type, Optional
 from datetime import datetime
+from typing import Dict, Type, Optional
+
 from OlivOS.messageAPI import Message_templet
 
 from nonebot import get_bot
@@ -12,8 +13,8 @@ from nonebot.adapters.telegram.message import Message
 from nonebot.adapters.telegram.event import (
     Event,
     MessageEvent,
-    PrivateMessageEvent,
     GroupMessageEvent,
+    PrivateMessageEvent,
 )
 
 from . import MSG, BotInfo

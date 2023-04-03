@@ -3,6 +3,7 @@ import hashlib
 import importlib
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Type, Union, Callable, Optional, Coroutine
+
 from pydantic import BaseModel
 
 from nonebot import get_bot

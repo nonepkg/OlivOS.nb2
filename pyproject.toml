@@ -3,14 +3,14 @@ name = "OlivOS.nb2"
 version = "0.2.1"
 description = "Load OlivOS plugin in NoneBot2"
 authors = [{ name = "jigsaw", email = "j1g5aw@foxmail.com" }]
-dependencies = ["olivos<1.0.0,>=0.10.2", "nonebot2<3.0.0,>=2.0.0rc1"]
+dependencies = ["olivos<1.0.0,>=0.10.2", "nonebot2<3.0.0,>=2.0.0"]
 requires-python = ">=3.8,<4.0"
 readme = "README.md"
 license = { text = "AGPL-3.0-only" }
 
 [project.optional-dependencies]
-onebot = ["nonebot-adapter-onebot<3.0.0.0,>=2.0.0-beta.1"]
-telegram = ["nonebot-adapter-telegram<1.0.0.0,>=0.1.0-beta.0"]
+onebot = ["nonebot-adapter-onebot<3.0.0.0,>=2.2.2"]
+telegram = ["nonebot-adapter-telegram<1.0.0.0,>=0.1.0b13"]
 
 [tool.pdm.dev.dependencies]
 nb-cli = "^0.6.8"

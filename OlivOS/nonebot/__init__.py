@@ -7,7 +7,12 @@ from .middlewares import _middlewares, import_middleware
 from .plugin import Proc, load_plugins, get_loaded_plugins
 
 __plugin_meta__ = PluginMetadata(
-    name="OlivOS.nb2", description="在 NoneBot2 中加载 OlivOS 插件", usage=""
+    name="OlivOS.nb2",
+    description="在 NoneBot2 中加载 OlivOS 插件",
+    usage="将 OlivOS 插件放入./data/OlivOS/app/",
+    type="application",
+    homepage="https://github.com/nonepkg/OlivOS.nb2",
+    supported_adapters={"~onebot.v11", "~telegram"},
 )
 
 driver = get_driver()

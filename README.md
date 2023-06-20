@@ -52,13 +52,13 @@ pip install git+https://github.com/nonepkg/OlivOS.nb2.git
 
 ## 使用
 
-目前只有 OneBotV11（CQHTTP）平台的兼容层，其他平台待添加（Telegram 平台实验中）。
+目前只有 OneBot V11（CQHTTP）平台的兼容层，其他平台待添加（Telegram 平台实验中）。
 
 OlivOS 插件请放入`./data/OlivOS/app/`。
 
 ## 插件兼容名单
 
-**这里的插件指 OlivOS 插件。**未在此名单并不意味着无法加载，只是加载后可能出现位未知问题。
+**这里的插件指 OlivOS 插件。** 未在此名单并不意味着无法加载，只是加载后可能出现未知问题。
 
 - [OlivOS-Team/OlivaDiceCore](https://github.com/OlivOS-Team/OlivaDiceCore)
 - [OlivOS-Team/OlivaDiceJoy](https://github.com/OlivOS-Team/OlivaDiceJoy)

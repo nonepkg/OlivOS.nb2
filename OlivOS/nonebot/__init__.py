@@ -1,6 +1,6 @@
 from nonebot import get_driver
+from nonebot.matcher import Matcher
 from nonebot.adapters import Bot, Event
-from nonebot.plugin.plugin import Matcher
 from nonebot.plugin import PluginMetadata, on
 
 from .middlewares import _middlewares, import_middleware

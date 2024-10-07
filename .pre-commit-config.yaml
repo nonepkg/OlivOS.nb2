@@ -10,12 +10,12 @@ repos:
     rev: 5.13.2
     hooks:
       - id: isort
-        stages: [commit]
+        stages: [Nonepre-commitNone]
   - repo: https://github.com/psf/black
-    rev: 24.8.0
+    rev: 24.10.0
     hooks:
       - id: black
-        stages: [commit]
+        stages: [Nonepre-commitNone]
   - repo: https://github.com/nonebot/nonemoji
     rev: v0.1.4
     hooks:

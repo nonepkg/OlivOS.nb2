@@ -4,10 +4,9 @@ import importlib
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Type, Union, Callable, Optional, Coroutine
 
-from pydantic import BaseModel
-
 from nonebot import get_bot
 from nonebot.log import logger
+from pydantic import BaseModel
 from nonebot.adapters import Bot, Event
 
 middlewares_map = {"OneBot V11": "onebot", "Telegram": "telegram"}
@@ -111,23 +110,23 @@ class OlivOSEvent(ABC):
     def process_message(self):
         if self.plugin_info["func_type"] in ["private_message", "group_message"]:
             if (
-                self.data.message_sdk.mode_rx  # type:ignore
+                self.data.message_sdk.mode_rx  # type: ignore
                 == self.plugin_info["message_mode_tx"]
             ):
-                self.data.message = self.data.message_sdk.data_raw  # type:ignore
+                self.data.message = self.data.message_sdk.data_raw  # type: ignore
             else:
-                self.data.message = self.data.message_sdk.get(  # type:ignore
+                self.data.message = self.data.message_sdk.get(  # type: ignore
                     self.plugin_info["message_mode_tx"]
                 )
             if (
-                self.data.raw_message_sdk.mode_rx  # type:ignore
+                self.data.raw_message_sdk.mode_rx  # type: ignore
                 == self.plugin_info["message_mode_tx"]
             ):
                 self.data.raw_message = (
-                    self.data.raw_message_sdk.data_raw  # type:ignore
+                    self.data.raw_message_sdk.data_raw  # type: ignore
                 )
             else:
-                self.data.raw_message = self.data.raw_message_sdk.get(  # type:ignore
+                self.data.raw_message = self.data.raw_message_sdk.get(  # type: ignore
                     self.plugin_info["message_mode_tx"]
                 )
 

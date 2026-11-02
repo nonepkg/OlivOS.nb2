@@ -5,9 +5,8 @@ https://github.com/OlivOS-Team/OlivOS/blob/main/OlivOS/telegramSDK.py
 from datetime import datetime
 from typing import Dict, Type, Optional
 
-from OlivOS.messageAPI import Message_templet
-
 from nonebot import get_bot
+from OlivOS.messageAPI import Message_templet
 from nonebot.adapters.telegram.bot import Bot
 from nonebot.adapters.telegram.message import Message
 from nonebot.adapters.telegram.event import (
@@ -70,5 +69,5 @@ class OlivOSEvent(BaseOlivOSEvent):
 
     def send(self, message: MSG):
         self.call_api(
-            "sendMessage", chat_id=self.data.chat.id, text=message  # type:ignore
+            "sendMessage", chat_id=self.data.chat.id, text=message  # type: ignore
         )
